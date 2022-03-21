@@ -44,6 +44,39 @@ public class UserDao {
 		}
 	}
 	
+public User userExistsById(long userId) throws Exception {
+		
+		
+		try {
+			DbConn db = new DbConn();
+			Connection c = db.Get_Connection();
+			PreparedStatement ps = c.prepareStatement("SELECT * from user_details where user_id=?");
+			
+			ps.setLong(1,userId);
+			ResultSet rs = ps.executeQuery();
+			User u=new User();
+			while (rs.next()) {
+				
+				u.setUser_id(Long.parseLong(rs.getString("user_id")));
+				u.setUser_name(rs.getString("user_name"));
+				u.setFull_name(rs.getString("full_name"));
+				u.setPassword(rs.getString("password"));
+				u.setDate_of_birth(rs.getString("date_of_birth"));
+				}
+			
+			
+			c.close();
+			if((u.getUser_id()==0)) {
+				return null;
+			}
+			
+			
+			return u;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
 	public User addUser(User u) {
 		
 		try {

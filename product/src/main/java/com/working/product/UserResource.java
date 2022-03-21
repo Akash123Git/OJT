@@ -1,12 +1,17 @@
 package com.working.product;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
@@ -44,7 +49,13 @@ public class UserResource {
 					return Response.status(Response.Status.BAD_REQUEST).entity("requires proper data for registration")
 							.build();
 				
-				} else if (status.trim().equals("false")) {
+				}
+				else if(status.trim().equals("user_already_exists")){
+					
+					return Response.status(Response.Status.BAD_REQUEST).entity("enter proper password").build();
+				
+				}
+				else if (status.trim().equals("false")) {
 					
 					return Response.status(Response.Status.BAD_REQUEST).entity("enter proper user details").build();
 				
@@ -68,6 +79,29 @@ public class UserResource {
 		// add user allowed=true
 
 	}
+	
+	
+	@GET
+	@Path("/getSingleUserDetails")
+	public List<User> fetchSingleUserDetails() {
+		
+		List<User> list=new ArrayList<User>();
+		User u=new User();
+		u.setUser_id(100);
+		u.setFull_name("Hello");
+		u.setUser_name("welcome");
+		list.add(u);
+		
+		u=new User();
+		u.setUser_id(102);
+		u.setFull_name("Hii");
+		u.setUser_name("Good morning");
+		list.add(u);
+		
+		
+		return list;
+	}
+	
 //
 //	@POST
 //	@Path("/addDetails")
@@ -170,18 +204,26 @@ public class UserResource {
 			}
 			
 			if (hmap.containsValue("true")) {
-				user.setUser_id(u.getUser_id());
-				user.setPassword(u.getPassword());
-				user.setFull_name(hmap.get("defaultFullName"));
-				user.setUser_name(hmap.get("defaultUserName"));
-				user.setDate_of_birth(hmap.get("defaultDateOfBirth"));
-				user = userdao.addUser(user);
+				//check wether user exists
+				user=userdao.userExistsById(u.getUser_id());
 				
 				if (user != null) {
-					status = "true";
+					status = "user_already_exists";
 				} else {
-					status = "data_error";
+					user.setUser_id(u.getUser_id());
+					user.setPassword(u.getPassword());
+					user.setFull_name(hmap.get("defaultFullName"));
+					user.setUser_name(hmap.get("defaultUserName"));
+					user.setDate_of_birth(hmap.get("defaultDateOfBirth"));
+					user = userdao.addUser(user);
+					
+					if (user != null) {
+						status = "true";
+					} else {
+						status = "data_error";
+					}
 				}
+				
 			
 			} else if (hmap.containsValue("false")) {	
 				status = "false";
