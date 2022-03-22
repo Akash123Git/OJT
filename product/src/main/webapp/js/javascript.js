@@ -11,7 +11,9 @@ $(document).ready(function() {
 			$("#msg").text(msg+".");
 		}
 		function addUserDetailsMsg(userDetail){
-			$("#msg").text("Id: "+userDetail.user_id+" Name: "+userDetail.user_name+" date-of-birth: "+userDetail.date_of_birth);
+			$("#msg").html("<pre><strong>Id</strong>: "+userDetail.user_id+"\n<strong>full_name:</strong> "+userDetail.full_name+
+			"\n <strong>Name:</strong> "+userDetail.user_name+"\n <strong>password:</strong> "+userDetail.password+
+			"\n <strong>date_of_birth:</strong> "+userDetail.date_of_birth+"</pre>");
 		}
 		
 		if ((user_Id != "") && (password != "")) {
@@ -33,7 +35,7 @@ $(document).ready(function() {
 				success: function(data) {
 					addUserDetailsMsg(data);
 				},
-				error: function(jqXHR,status,error) {
+				error: function(jqXHR) {
 					addmsg(jqXHR.responseText)
 				}
 			});

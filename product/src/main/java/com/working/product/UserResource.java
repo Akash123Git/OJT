@@ -210,6 +210,7 @@ public class UserResource {
 				if (user != null) {
 					status = "user_already_exists";
 				} else {
+					user=new User();
 					user.setUser_id(u.getUser_id());
 					user.setPassword(u.getPassword());
 					user.setFull_name(hmap.get("defaultFullName"));
